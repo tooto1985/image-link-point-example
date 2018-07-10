@@ -66,6 +66,11 @@
           }
         },
         methods: {
+          addButton() {
+            this.list.push({
+              
+            })
+          },
           setPoint(item) {
             var originSelectWidth = item.x * this.scaleWidth
             var originSelectHeight = item.y * this.scaleHeight
@@ -86,7 +91,7 @@
       <a v-for="(item, index) in list" :style="setPoint(item)">{{index}}</a>
     </div>
     <div>x:{{originX*scaleWidth}}, y:{{originY*scaleHeight}}</div>
-    <input type="button" value="Add">
+    <input type="button" value="Add" @click="addButton">
     <ul>
       <li v-for="(item, index) in list">
         <div>
