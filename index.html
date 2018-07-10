@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>image-link-point-example</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    .drawing {
+      position: relative;
+      width: 50%;
+    }
+    .drawing>img {
+      width: 100%;
+    }
+    .drawing>a {
+      width: 20px;
+      height: 20px;
+      background: red;
+      display: block;
+      position: absolute;
+      border-radius: 20px;
+      margin-left: -10px;
+      margin-top: -10px;
+      color: white;
+      text-align: center;
+      line-height: 20px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      new Vue({
+        el: '#app',
+        data() {
+          return {
+            originWidth: 0,
+            originHeight: 0,
+            scaleWidth: 0,
+            scaleHeight: 0,
+            originX: 0,
+            originY: 0,
+            list: []
+          }
+        },
+        mounted() {
+          this.$refs.img.onload = () => {
+            this.originWidth = this.$refs.img.naturalWidth
+            this.originHeight = this.$refs.img.naturalHeight,
+              this.scaleWidth = this.originWidth / this.$refs.img.width
+            this.scaleHeight = this.originHeight / this.$refs.img.height
+          }
+          this.$refs.img.onclick = e => {
+            this.list.push({
+              x: e.offsetX,
+              y: e.offsetY
+            })
+          }
+          this.$refs.img.onmousemove = e => {
+            this.originX = e.offsetX
+            this.originY = e.offsetY
+          }
+        },
+        methods: {
+          setPoint(item) {
+            var originSelectWidth = item.x * this.scaleWidth
+            var originSelectHeight = item.y * this.scaleHeight
+            return {
+              left: (100 * (originSelectWidth / this.originWidth)) + '%',
+              top: (100 * (originSelectHeight / this.originHeight)) + '%'
+            }
+          }
+        }
+      })
+    }, false)
+  </script>
+</head>
+<body>
+  <div id="app">
+    <div class="drawing">
+      <img src="temp.jpg" ref="img">
+      <a v-for="(item, index) in list" :style="setPoint(item)">{{index}}</a>
+    </div>
+    <div>x:{{originX*scaleWidth}}, y:{{originY*scaleHeight}}</div>
+    <input type="button" value="Add">
+  </div>
+</body>
+</html>
