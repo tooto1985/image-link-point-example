@@ -31,7 +31,7 @@
       line-height: 20px;
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
       new Vue({
@@ -87,6 +87,13 @@
     </div>
     <div>x:{{originX*scaleWidth}}, y:{{originY*scaleHeight}}</div>
     <input type="button" value="Add">
+    <ul>
+      <li v-for="(item, index) in list">
+        <div>
+          圖片路徑<input type="text" v-model="list[index].path">
+        </div>
+      </li>
+    </ul>
   </div>
 </body>
 </html>
