@@ -12,12 +12,16 @@
     }
     .drawing {
       position: relative;
-      width: 50%;
+      width: 256px;
+      font-size: 0;
     }
     .drawing>img {
       width: 100%;
     }
     .drawing>a {
+      display: none;
+    }
+    .drawing>a[style]:not([style=""]) {
       width: 20px;
       height: 20px;
       background: red;
@@ -29,6 +33,7 @@
       color: white;
       text-align: center;
       line-height: 20px;
+      font-size: initial;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
@@ -44,7 +49,14 @@
             scaleHeight: 0,
             originX: 0,
             originY: 0,
-            list: []
+            list: [
+              /*
+              {
+                x: 0, //origin image x point
+                y: 0, //origin image y point
+              }
+              */
+            ]
           }
         },
         mounted() {
@@ -56,8 +68,9 @@
           }
           this.$refs.img.onclick = e => {
             this.list.push({
-              x: e.offsetX,
-              y: e.offsetY
+              index: this.list.length,
+              x: e.offsetX * this.scaleWidth,
+              y: e.offsetY * this.scaleHeight
             })
           }
           this.$refs.img.onmousemove = e => {
@@ -68,15 +81,21 @@
         methods: {
           addButton() {
             this.list.push({
-              
+              index: this.list.length,
             })
           },
-          setPoint(item) {
-            var originSelectWidth = item.x * this.scaleWidth
-            var originSelectHeight = item.y * this.scaleHeight
+          removeButton(item) {
+            var index = this.list.indexOf(item)
+            if (index !== -1) {
+              this.list.splice(index ,1)
+            }
+            
+          },
+          setPoint(item) { // item x and y is origin image size
+            if (!item.x || !item.y) return null
             return {
-              left: (100 * (originSelectWidth / this.originWidth)) + '%',
-              top: (100 * (originSelectHeight / this.originHeight)) + '%'
+              left: (100 * (item.x / this.originWidth)) + '%',
+              top: (100 * (item.y / this.originHeight)) + '%'
             }
           }
         }
@@ -87,15 +106,21 @@
 <body>
   <div id="app">
     <div class="drawing">
-      <img src="temp.jpg" ref="img">
-      <a v-for="(item, index) in list" :style="setPoint(item)">{{index}}</a>
+      <img src="https://1.bp.blogspot.com/-IfogqTLXAUw/Vzt9kQrGr-I/AAAAAAAAGHQ/MFyg7llkkE8UvrfiT58SiOSkvkzuNGLlgCLcB/s1600/16pxGrid_256x256.png" ref="img">
+      <a v-for="(item, index) in list" :style="setPoint(item)">{{item.index}}</a>
     </div>
     <div>x:{{originX*scaleWidth}}, y:{{originY*scaleHeight}}</div>
     <input type="button" value="Add" @click="addButton">
     <ul>
       <li v-for="(item, index) in list">
         <div>
-          圖片路徑<input type="text" v-model="list[index].path">
+          錨點編號<input type="number" v-model="list[index].index">
+          座標X<input type="number" v-model="list[index].x">
+          座標Y<input type="number" v-model="list[index].y"><br>
+          商品編號<input type="text" v-model="list[index].seriesID">
+          自訂連結<input type="text" v-model="list[index].url">
+          錨點說明<input type="text" v-model="list[index].tip">
+          <input type="button" value="刪除" @click="removeButton(item)">
         </div>
       </li>
     </ul>
