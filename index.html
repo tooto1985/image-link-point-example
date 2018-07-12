@@ -12,10 +12,14 @@
     }
     .drawing {
       position: relative;
-      width: 256px;
       font-size: 0;
+      display: inline-block;
     }
-    .drawing>img {
+    .drawing.max {
+      width: 100%;
+    }
+
+    .drawing.max>img {
       width: 100%;
     }
     .drawing>a {
@@ -38,45 +42,64 @@
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
   <script>
+    var input = {
+      image: "http://fakeimg.pl/1024x512",
+      product: "DA0221",
+      data: [{
+        index: 0,
+        x:100,
+        y:300
+      }]
+    }
+
+
+
+
     window.addEventListener('DOMContentLoaded', function () {
       new Vue({
         el: '#app',
         data() {
           return {
+            image: input.image,
             originWidth: 0,
             originHeight: 0,
             scaleWidth: 0,
             scaleHeight: 0,
             originX: 0,
             originY: 0,
-            list: [
-              /*
+            isOverWidth: false,
+            list: input.data || [/*
               {
-                x: 0, //origin image x point
-                y: 0, //origin image y point
-              }
-              */
+                index: => 錨點編號
+                x: => 原尺寸座標X
+                y: => 原尺寸座標y
+                product: => 商品編號
+                url: => 自訂連結
+                tip: => 錨點說明
+              }*/
             ]
           }
         },
         mounted() {
           this.$refs.img.onload = () => {
             this.originWidth = this.$refs.img.naturalWidth
-            this.originHeight = this.$refs.img.naturalHeight,
-              this.scaleWidth = this.originWidth / this.$refs.img.width
-            this.scaleHeight = this.originHeight / this.$refs.img.height
+            this.originHeight = this.$refs.img.naturalHeight
+            this.resizeDrawing()
           }
           this.$refs.img.onclick = e => {
             this.list.push({
               index: this.list.length,
-              x: e.offsetX * this.scaleWidth,
-              y: e.offsetY * this.scaleHeight
+              x: this.toFixed(e.offsetX * this.scaleWidth),
+              y: this.toFixed(e.offsetY * this.scaleHeight)
             })
           }
           this.$refs.img.onmousemove = e => {
             this.originX = e.offsetX
             this.originY = e.offsetY
           }
+          window.addEventListener('resize', () => {
+            this.resizeDrawing()
+          }, false)
         },
         methods: {
           addButton() {
@@ -89,7 +112,10 @@
             if (index !== -1) {
               this.list.splice(index ,1)
             }
-            
+          },
+          saveBotton () {
+            input.data = this.list
+            console.log(JSON.stringify(input))
           },
           setPoint(item) { // item x and y is origin image size
             if (!item.x || !item.y) return null
@@ -97,6 +123,20 @@
               left: (100 * (item.x / this.originWidth)) + '%',
               top: (100 * (item.y / this.originHeight)) + '%'
             }
+          },
+          resizeDrawing () {
+            if (this.originWidth > document.body.clientWidth) {
+              this.scaleWidth = this.originWidth / document.body.clientWidth
+              this.scaleHeight = this.originWidth / document.body.clientWidth
+              this.isOverWidth = true
+            } else {
+              this.scaleWidth = this.originWidth / this.$refs.img.width
+              this.scaleHeight = this.originHeight / this.$refs.img.height
+              this.isOverWidth = false
+            }
+          },
+          toFixed (number) {
+            return Math.round(number)
           }
         }
       })
@@ -105,25 +145,38 @@
 </head>
 <body>
   <div id="app">
-    <div class="drawing">
-      <img src="https://1.bp.blogspot.com/-IfogqTLXAUw/Vzt9kQrGr-I/AAAAAAAAGHQ/MFyg7llkkE8UvrfiT58SiOSkvkzuNGLlgCLcB/s1600/16pxGrid_256x256.png" ref="img">
+    <div class="drawing" :class="{max:isOverWidth}">
+      <img :src="image" ref="img">
       <a v-for="(item, index) in list" :style="setPoint(item)">{{item.index}}</a>
     </div>
-    <div>x:{{originX*scaleWidth}}, y:{{originY*scaleHeight}}</div>
+    <div>x:{{toFixed(originX*scaleWidth)}}, y:{{toFixed(originY*scaleHeight)}}</div>
     <input type="button" value="Add" @click="addButton">
-    <ul>
+    <ol>
       <li v-for="(item, index) in list">
         <div>
-          錨點編號<input type="number" v-model="list[index].index">
-          座標X<input type="number" v-model="list[index].x">
-          座標Y<input type="number" v-model="list[index].y"><br>
-          商品編號<input type="text" v-model="list[index].seriesID">
-          自訂連結<input type="text" v-model="list[index].url">
-          錨點說明<input type="text" v-model="list[index].tip">
-          <input type="button" value="刪除" @click="removeButton(item)">
+          <table>
+            <tr>
+              <td>錨點編號</td>
+              <td><input type="number" v-model="list[index].index"></td>
+              <td>座標X</td>
+              <td><input type="number" v-model="list[index].x"></td>
+              <td>座標Y</td>
+              <td><input type="number" v-model="list[index].y"></td>
+              <td rowspan="2"><input type="button" value="刪除" @click="removeButton(item)"></td>                       
+            </tr>
+            <tr>
+              <td>商品編號</td>
+              <td><input type="text" v-model="list[index].product"></td>
+              <td>自訂連結</td>
+              <td><input type="text" v-model="list[index].url"></td>
+              <td>錨點說明</td>
+              <td><input type="text" v-model="list[index].tip"></td>
+            </tr>
+          </table>
         </div>
       </li>
-    </ul>
+    </ol>
+    <input type="button" value="儲存" @click="saveBotton">
   </div>
 </body>
 </html>
