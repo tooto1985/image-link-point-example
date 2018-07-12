@@ -10,11 +10,13 @@
     body {
       margin: 0;
     }
+
     .drawing {
       position: relative;
       font-size: 0;
       display: inline-block;
     }
+
     .drawing.max {
       width: 100%;
     }
@@ -22,9 +24,11 @@
     .drawing.max>img {
       width: 100%;
     }
+
     .drawing>a {
       display: none;
     }
+
     .drawing>a[style]:not([style=""]) {
       width: 20px;
       height: 20px;
@@ -42,25 +46,11 @@
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
   <script>
-    var input = {
-      image: "http://fakeimg.pl/1024x512",
-      product: "DA0221",
-      data: [{
-        index: 0,
-        x:100,
-        y:300
-      }]
-    }
-
-
-
-
     window.addEventListener('DOMContentLoaded', function () {
       new Vue({
         el: '#app',
         data() {
           return {
-            image: input.image,
             originWidth: 0,
             originHeight: 0,
             scaleWidth: 0,
@@ -68,27 +58,23 @@
             originX: 0,
             originY: 0,
             isOverWidth: false,
-            list: input.data || [/*
-              {
-                index: => 錨點編號
-                x: => 原尺寸座標X
-                y: => 原尺寸座標y
-                product: => 商品編號
-                url: => 自訂連結
-                tip: => 錨點說明
-              }*/
-            ]
+            json: {}
           }
         },
         mounted() {
+          var input = { "image": "http://fakeimg.pl/1024x512", "product": "DA0221", "data": [{ "index": 0, "x": 100, "y": 300, "url": "" }, { "index": 1, "x": "500", "y": "397", "product": null, "url": null, "tip": null }, { "index": 2, "x": null, "y": null, "product": null, "url": null, "tip": null }, { "index": 3, "x": 734, "y": 405, "product": null, "url": null, "tip": null }, { "index": 4, "x": 922, "y": 439, "product": null, "url": null, "tip": null }] }
+          this.json = input
+           window.addEventListener('resize', () => {
+            this.resizeDrawing()
+          }, false)
           this.$refs.img.onload = () => {
             this.originWidth = this.$refs.img.naturalWidth
             this.originHeight = this.$refs.img.naturalHeight
             this.resizeDrawing()
           }
           this.$refs.img.onclick = e => {
-            this.list.push({
-              index: this.list.length,
+            this.json.data.push({
+              index: this.json.data.length,
               x: this.toFixed(e.offsetX * this.scaleWidth),
               y: this.toFixed(e.offsetY * this.scaleHeight)
             })
@@ -97,25 +83,21 @@
             this.originX = e.offsetX
             this.originY = e.offsetY
           }
-          window.addEventListener('resize', () => {
-            this.resizeDrawing()
-          }, false)
         },
         methods: {
           addButton() {
-            this.list.push({
-              index: this.list.length,
+            this.json.data.push({
+              index: this.json.data.length
             })
           },
           removeButton(item) {
-            var index = this.list.indexOf(item)
+            var index = this.json.data.indexOf(item)
             if (index !== -1) {
-              this.list.splice(index ,1)
+              this.json.data.splice(index, 1)
             }
           },
-          saveBotton () {
-            input.data = this.list
-            console.log(JSON.stringify(input))
+          saveBotton() {
+            alert(JSON.stringify(this.json))
           },
           setPoint(item) { // item x and y is origin image size
             if (!item.x || !item.y) return null
@@ -124,7 +106,7 @@
               top: (100 * (item.y / this.originHeight)) + '%'
             }
           },
-          resizeDrawing () {
+          resizeDrawing() {
             if (this.originWidth > document.body.clientWidth) {
               this.scaleWidth = this.originWidth / document.body.clientWidth
               this.scaleHeight = this.originWidth / document.body.clientWidth
@@ -135,7 +117,7 @@
               this.isOverWidth = false
             }
           },
-          toFixed (number) {
+          toFixed(number) {
             return Math.round(number)
           }
         }
@@ -143,34 +125,49 @@
     }, false)
   </script>
 </head>
+
 <body>
   <div id="app">
     <div class="drawing" :class="{max:isOverWidth}">
-      <img :src="image" ref="img">
-      <a v-for="(item, index) in list" :style="setPoint(item)">{{item.index}}</a>
+      <img :src="json.image" ref="img">
+      <a v-for="(item, index) in json.data" :style="setPoint(item)">{{item.index}}</a>
     </div>
     <div>x:{{toFixed(originX*scaleWidth)}}, y:{{toFixed(originY*scaleHeight)}}</div>
     <input type="button" value="Add" @click="addButton">
     <ol>
-      <li v-for="(item, index) in list">
+      <li v-for="(item, index) in json.data">
         <div>
           <table>
             <tr>
               <td>錨點編號</td>
-              <td><input type="number" v-model="list[index].index"></td>
+              <td>
+                <input type="number" v-model="json.data[index].index">
+              </td>
               <td>座標X</td>
-              <td><input type="number" v-model="list[index].x"></td>
+              <td>
+                <input type="number" v-model="json.data[index].x">
+              </td>
               <td>座標Y</td>
-              <td><input type="number" v-model="list[index].y"></td>
-              <td rowspan="2"><input type="button" value="刪除" @click="removeButton(item)"></td>                       
+              <td>
+                <input type="number" v-model="json.data[index].y">
+              </td>
+              <td rowspan="2">
+                <input type="button" value="刪除" @click="removeButton(item)">
+              </td>
             </tr>
             <tr>
               <td>商品編號</td>
-              <td><input type="text" v-model="list[index].product"></td>
+              <td>
+                <input type="text" v-model="json.data[index].product">
+              </td>
               <td>自訂連結</td>
-              <td><input type="text" v-model="list[index].url"></td>
+              <td>
+                <input type="text" v-model="json.data[index].url">
+              </td>
               <td>錨點說明</td>
-              <td><input type="text" v-model="list[index].tip"></td>
+              <td>
+                <input type="text" v-model="json.data[index].tip">
+              </td>
             </tr>
           </table>
         </div>
@@ -179,4 +176,5 @@
     <input type="button" value="儲存" @click="saveBotton">
   </div>
 </body>
+
 </html>
