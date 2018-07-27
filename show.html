@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .drawing {
+            position: relative;
+            font-size: 0;
+            display: inline-block;
+        }
+
+        .drawing>img {
+            width: 100%;
+        }
+
+        .drawing>a {
+            display: none;
+        }
+
+        .drawing>a[style]:not([style=""]) {
+            width: 20px;
+            height: 20px;
+            background: red;
+            display: block;
+            position: absolute;
+            border-radius: 20px;
+            margin-left: -10px;
+            margin-top: -10px;
+            color: white;
+            text-align: center;
+            line-height: 20px;
+            font-size: initial;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+
+    <div class="drawing">
+        <img src="https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg">
+        <a style="left: 6.30208%; top: 35%;">0</a>
+        <a style="left: 10.0521%; top: 78.0488%;">1</a>
+        <a style="left: 26.5104%; top: 93.2927%;">2</a>
+        <a style="left: 71.5104%; top: 8.90244%;">3</a>
+        <a style="left: 69.1146%; top: 43.4146%;">4</a>
+        <a style="left: 70.625%; top: 92.1951%;">5</a>
+    </div>
+    <div class="drawing" style="width:300px">
+        <img src="https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg">
+        <a style="left: 6.30208%; top: 35%;">0</a>
+        <a style="left: 10.0521%; top: 78.0488%;">1</a>
+        <a style="left: 26.5104%; top: 93.2927%;">2</a>
+        <a style="left: 71.5104%; top: 8.90244%;">3</a>
+        <a style="left: 69.1146%; top: 43.4146%;">4</a>
+        <a style="left: 70.625%; top: 92.1951%;">5</a>
+    </div>    
+
+
+
+    <img src="https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg">
+
+    <img src="https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg" width="300px">
+
+</body>
+
+</html>

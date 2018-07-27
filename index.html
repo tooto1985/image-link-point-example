@@ -8,11 +8,6 @@
   <title>image-link-point-example</title>
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/css/bootstrap.min.css' />
   <style>
-    body {
-      margin: 0;
-      overflow-y: scroll;
-    }
-
     .drawing {
       position: relative;
       font-size: 0;
@@ -45,14 +40,6 @@
       line-height: 20px;
       font-size: initial;
     }
-
-    ol li {
-      border: 2px solid cornflowerblue;
-      margin-bottom: 20px;
-      padding: 10px;
-      border-radius: 10px;
-      max-width: 750px;
-    }
   </style>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/js/bootstrap.min.js'></script>
@@ -75,7 +62,7 @@
           }
         },
         mounted() {
-          var input = { "image": "https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg", "key": "DA0221", "data": [] }
+          var input = {"image":"https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg","key":"DA0221","data":[{"index":"0","x":"121","y":"287","product":"AB6767","tip":"純色仿針織V領彈力上衣","url":"https://www.obdesign.com.tw/product.aspx?seriesID=AB6767-"},{"index":1,"x":193,"y":640,"product":"DA0002","tip":"深藍色長褲","url":"http://xxx.xxx"},{"index":2,"x":509,"y":765,"product":"DA0003","url":"http://xxx.xxx","tip":"白色包包"},{"index":3,"x":1373,"y":73,"product":"DA0004","url":"http://xxx.xxx","tip":"白色帽子"},{"index":4,"x":1327,"y":356,"product":"DA0005","url":"http://xxx.xxx","tip":"白色花襯衫"},{"index":5,"x":1356,"y":756,"product":"DA0006","url":"http://xxx.xxx","tip":"黃色包包"}]}
           this.json = input
           window.addEventListener('resize', () => {
             this.resizeDrawing()
@@ -83,10 +70,10 @@
           this.$refs.img.onload = () => {
             this.originWidth = this.$refs.img.naturalWidth
             this.originHeight = this.$refs.img.naturalHeight
-            this.parentsPadding = this.$refs.img.x * 2
             this.resizeDrawing()
           }
           this.$refs.img.onclick = e => {
+            this.resizeDrawing()
             this.json.data.push({
               index: this.json.data.length,
               x: this.toFixed(e.offsetX * this.scaleWidth),
@@ -121,6 +108,7 @@
             }
           },
           resizeDrawing() {
+            this.parentsPadding = this.$refs.img.x * 2            
             if (this.originWidth > document.body.clientWidth - this.parentsPadding) {
               this.scaleWidth = this.originWidth / (document.body.clientWidth - this.parentsPadding)
               this.scaleHeight = this.originWidth / (document.body.clientWidth - this.parentsPadding)
