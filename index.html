@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>image-link-point-example</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/css/bootstrap.min.css' />
   <style>
     body {
       margin: 0;
@@ -53,6 +54,8 @@
       max-width: 750px;
     }
   </style>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/js/bootstrap.min.js'></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
@@ -67,11 +70,12 @@
             originX: 0,
             originY: 0,
             isOverWidth: false,
+            parentsPadding: 0,
             json: {}
           }
         },
         mounted() {
-          var input = {"image":"https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg","key":"DA0221","data":[{"index":0,"x":138,"y":334,"product":"DA0001","tip":"淺藍色上衣","url":"http://xxx.xxx"},{"index":1,"x":193,"y":640,"product":"DA0002","tip":"深藍色長褲","url":"http://xxx.xxx"},{"index":2,"x":509,"y":765,"product":"DA0003","url":"http://xxx.xxx","tip":"白色包包"},{"index":3,"x":1373,"y":73,"product":"DA0004","url":"http://xxx.xxx","tip":"白色帽子"},{"index":4,"x":1327,"y":356,"product":"DA0005","url":"http://xxx.xxx","tip":"白色花襯衫"},{"index":5,"x":1356,"y":756,"product":"DA0006","url":"http://xxx.xxx","tip":"黃色包包"}]}
+          var input = { "image": "https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg", "key": "DA0221", "data": [] }
           this.json = input
           window.addEventListener('resize', () => {
             this.resizeDrawing()
@@ -79,6 +83,7 @@
           this.$refs.img.onload = () => {
             this.originWidth = this.$refs.img.naturalWidth
             this.originHeight = this.$refs.img.naturalHeight
+            this.parentsPadding = this.$refs.img.x * 2
             this.resizeDrawing()
           }
           this.$refs.img.onclick = e => {
@@ -116,9 +121,9 @@
             }
           },
           resizeDrawing() {
-            if (this.originWidth > document.body.clientWidth) {
-              this.scaleWidth = this.originWidth / document.body.clientWidth
-              this.scaleHeight = this.originWidth / document.body.clientWidth
+            if (this.originWidth > document.body.clientWidth - this.parentsPadding) {
+              this.scaleWidth = this.originWidth / (document.body.clientWidth - this.parentsPadding)
+              this.scaleHeight = this.originWidth / (document.body.clientWidth - this.parentsPadding)
               this.isOverWidth = true
             } else {
               this.scaleWidth = this.originWidth / this.$refs.img.width
@@ -136,53 +141,68 @@
 </head>
 
 <body>
-  <div id="app">
-    <div class="drawing" :class="{max:isOverWidth}">
-      <img :src="json.image" ref="img">
-      <a v-for="(item, index) in json.data" :style="setPoint(item)">{{item.index}}</a>
-    </div>
-    <input type="button" value="無錨點新增" @click="addButton">
-    <span>x:{{toFixed(originX*scaleWidth)}}, y:{{toFixed(originY*scaleHeight)}}</span>
-    <ol>
-      <li v-for="(item, index) in json.data">
-        <div>
-          <table>
-            <tr>
-              <td>錨點編號</td>
-              <td>
-                <input type="number" v-model="json.data[index].index">
-              </td>
-              <td>座標X</td>
-              <td>
-                <input type="number" v-model="json.data[index].x">
-              </td>
-              <td>座標Y</td>
-              <td>
-                <input type="number" v-model="json.data[index].y">
-              </td>
-              <td rowspan="2">
-                <input type="button" value="刪除" @click="removeButton(item)">
-              </td>
-            </tr>
-            <tr>
-              <td>商品編號</td>
-              <td>
-                <input type="text" v-model="json.data[index].product">
-              </td>
-              <td>自訂連結</td>
-              <td>
-                <input type="text" v-model="json.data[index].url">
-              </td>
-              <td>錨點說明</td>
-              <td>
-                <input type="text" v-model="json.data[index].tip">
-              </td>
-            </tr>
-          </table>
+  <div id="app" class="container-fluid">
+    <div class="card">
+      <div class="card-header text-white bg-primary">
+        請由下圖點擊添加錨點
+      </div>
+      <div class="card-body">
+        <div class="drawing" :class="{max:isOverWidth}">
+          <img :src="json.image" ref="img">
+          <a v-for="(item, index) in json.data" :style="setPoint(item)">{{item.index}}</a>
         </div>
-      </li>
-    </ol>
-    <input type="button" value="儲存" @click="saveBotton">
+        <div>
+          <span>原圖X座標：{{toFixed(originX*scaleWidth)}}px, 原圖Y座標：{{toFixed(originY*scaleHeight)}}px</span>
+        </div>
+        <input type="button" value="無錨點新增" @click="addButton">
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header text-white bg-primary">
+        各別錨點詳細資訊設定
+      </div>
+      <div class="card-body">
+        <div class="card" v-for="(item, index) in json.data">
+          <div class="card-body">
+            <table>
+              <tr>
+                <td>錨點編號</td>
+                <td>
+                  <input type="number" v-model="json.data[index].index">
+                </td>
+                <td>座標X</td>
+                <td>
+                  <input type="number" v-model="json.data[index].x">
+                </td>
+                <td>座標Y</td>
+                <td>
+                  <input type="number" v-model="json.data[index].y">
+                </td>
+                <td rowspan="2">
+                  <input type="button" value="刪除" @click="removeButton(item)">
+                </td>
+              </tr>
+              <tr>
+                <td>商品編號</td>
+                <td>
+                  <input type="text" v-model="json.data[index].product">
+                </td>
+                <td>自訂連結</td>
+                <td>
+                  <input type="text" v-model="json.data[index].url">
+                </td>
+                <td>錨點說明</td>
+                <td>
+                  <input type="text" v-model="json.data[index].tip">
+                </td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+        <input type="button" value="儲存" @click="saveBotton">
+      </div>
+    </div>
   </div>
 </body>
 
