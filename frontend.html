@@ -13,14 +13,22 @@
 <body>
 
   <div id="app">
-    <vue-drawing :src="src" :pointdata="pointData"></vue-drawing>
-    <vue-drawing :src="src"></vue-drawing>
+    <a href="http://www.google.com.tw">
+      <vue-drawing :src="src" :pointdata="pointData" width="800px" :is-Mobile="true"></vue-drawing>
+    </a>
+    
+    <a href="http://www.google.com.tw">
+      <vue-drawing :src="src"></vue-drawing>
+    </a>
+
+    <vue-drawing></vue-drawing>
+
     <vue-drawing></vue-drawing>
   </div>
 
 
   <script>
-    Vue.use(httpVueLoader);
+    Vue.use(httpVueLoader)
     new Vue({
       el: '#app',
       data: function() {

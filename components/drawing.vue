@@ -1,13 +1,14 @@
 <template>
-  <div class="drawing">
-    <img :src="$props.src" ref="img">
-    <template v-if="$props.pointdata && $props.pointdata.data && $props.pointdata.data.length">
+  <div class="drawing" :style="{width: setWidth()}">
+    <img :src="setSrc()" ref="img">
+    <template v-if="setShowHidePoints()">
     <a v-for="(item, index) in $props.pointdata.data" :key="index"
       :style="setPoint(item)"
-      :href="item.url"
+      :href="setHref(item.url)"
       :data-tip="item.tip"
       :data-right="item.right"
       :target="item.target ? '_blank': false"
+      @click="mobileClick(item, $event)"
       >+</a>
     </template>
   </div>
@@ -19,32 +20,74 @@ module.exports = {
     return {
       originWidth: 0,
       originHeight: 0
-    };
+    }
   },
   props: {
     src: {
       type: String
     },
+    width: {
+      type: String
+    },
     pointdata: {
       type: Object
+    },
+    isMobile: {
+      type: Boolean
     }
   },
   mounted: function() {
     this.$refs.img.onload = () => {
-      this.originWidth = this.$refs.img.naturalWidth;
-      this.originHeight = this.$refs.img.naturalHeight;
-    };
+      this.originWidth = this.$refs.img.naturalWidth
+      this.originHeight = this.$refs.img.naturalHeight
+    }
+    console.log(this.$props.isMobile)
   },
   methods: {
+    setWidth: function() {
+      if (this.$props.width) {
+        if (/\d$/.test(this.$props.width)) {
+          return this.$props.width + 'px'
+        } else {
+          return this.$props.width
+        }
+      }
+    },
+    setSrc: function() {
+      return this.$props.pointdata && this.$props.pointdata.image || this.$props.src
+    },
+    setShowHidePoints: function() {
+      return this.$props.pointdata && this.$props.pointdata.data && this.$props.pointdata.data.length
+    },   
     setPoint: function(item) {
-      if (!item.x || !item.y) return null;
+      if (!item.x || !item.y) return null
       return {
         left: 100 * (item.x / this.originWidth) + "%",
         top: 100 * (item.y / this.originHeight) + "%"
-      };
+      }
+    },
+    setHref: function(url) {
+      if (!this.$props.isMobile) {
+        return url
+      }
+    },
+    mobileClick: function(item, e) {
+      if (this.$props.isMobile) {
+        this.$props.pointdata.data.filter(function(a) {
+          return a != item
+        }).forEach(function(a) {
+          a.isMobileClicked = false
+        })
+        if (!item.isMobileClicked) {
+          item.isMobileClicked = true
+        } else {
+          location.href = item.url
+        }
+        e.preventDefault()
+      }
     }
   }
-};
+}
 </script>
 
 <style scoped>
