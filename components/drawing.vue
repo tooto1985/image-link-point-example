@@ -1,14 +1,14 @@
 <template>
   <div class="drawing" :style="{width: setWidth()}">
     <img :src="setSrc()" ref="img">
-    <template v-if="setShowHidePoints()">
-    <a v-for="(item, index) in $props.pointdata.data" :key="index"
+    <template v-if="setShow()">
+    <a v-for="(item, index) in json.data" :key="index"
       :style="setPoint(item)"
       :href="setHref(item.url)"
       :data-tip="item.tip"
       :data-right="item.right"
       :target="item.target ? '_blank': false"
-      @click="mobileClick(item, $event)"
+      @click="clickMobile(item, $event)"
       >+</a>
     </template>
   </div>
@@ -19,7 +19,11 @@ module.exports = {
   data: function() {
     return {
       originWidth: 0,
-      originHeight: 0
+      originHeight: 0,
+      json: this.$props.detail,
+      isMobile: this.$props.mobile,
+      cssWidth: this.$props.width,
+      imgSrc: this.$props.src
     }
   },
   props: {
@@ -29,10 +33,10 @@ module.exports = {
     width: {
       type: String
     },
-    pointdata: {
+    detail: {
       type: Object
     },
-    isMobile: {
+    mobile: {
       type: Boolean
     }
   },
@@ -41,24 +45,25 @@ module.exports = {
       this.originWidth = this.$refs.img.naturalWidth
       this.originHeight = this.$refs.img.naturalHeight
     }
-    console.log(this.$props.isMobile)
   },
   methods: {
     setWidth: function() {
-      if (this.$props.width) {
-        if (/\d$/.test(this.$props.width)) {
-          return this.$props.width + 'px'
+      if (this.cssWidth) {
+        if (/\d$/.test(this.cssWidth)) {
+          return this.cssWidth + 'px'
         } else {
-          return this.$props.width
+          return this.cssWidth
         }
+      } else {
+        return this.originWidth + 'px'
       }
     },
     setSrc: function() {
-      return this.$props.pointdata && this.$props.pointdata.image || this.$props.src
+      return this.json && this.json.image || this.imgSrc
     },
-    setShowHidePoints: function() {
-      return this.$props.pointdata && this.$props.pointdata.data && this.$props.pointdata.data.length
-    },   
+    setShow: function() {
+      return this.json && this.json.data && this.json.data.length
+    }, 
     setPoint: function(item) {
       if (!item.x || !item.y) return null
       return {
@@ -67,13 +72,11 @@ module.exports = {
       }
     },
     setHref: function(url) {
-      if (!this.$props.isMobile) {
-        return url
-      }
+      if (!this.isMobile) return url
     },
-    mobileClick: function(item, e) {
-      if (this.$props.isMobile) {
-        this.$props.pointdata.data.filter(function(a) {
+    clickMobile: function(item, e) {
+      if (this.isMobile) {
+        this.json.data.filter(function(a) {
           return a != item
         }).forEach(function(a) {
           a.isMobileClicked = false

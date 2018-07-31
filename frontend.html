@@ -12,18 +12,33 @@
 
 <body>
 
+  <pre>
+    src 圖片路徑
+    detail 錨點資料(格式：{image:'圖片路徑(有detail.image則取代src))',data:[{......}]})
+    width 寬度(和img標籤一樣, 未設定原圖尺寸, 預設單位px)
+    mobile true=手機版(點第一次提示，點第二次連結), false=電腦版(滑鼠滑入提示，點擊連結)
+  </pre>
+  
+
+
+
   <div id="app">
     <a href="http://www.google.com.tw">
-      <vue-drawing :src="src" :pointdata="pointData" width="800px" :is-Mobile="true"></vue-drawing>
+      <vue-drawing :src="src" :detail="detail" :mobile="true"></vue-drawing>
     </a>
     
-    <a href="http://www.google.com.tw">
+    <!-- <a href="http://www.google.com.tw">
       <vue-drawing :src="src"></vue-drawing>
     </a>
 
     <vue-drawing></vue-drawing>
 
-    <vue-drawing></vue-drawing>
+    <vue-drawing></vue-drawing> -->
+
+
+    <a href="http://www.google.com.tw">
+      <img src="https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg">
+    </a>
   </div>
 
 
@@ -34,7 +49,7 @@
       data: function() {
         return {
           src: "https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg",
-          pointData : {"image":"https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg","key":"DA0221","data":[{"index":"0","x":"121","y":"287","product":"AB6767","tip":"純色仿針織V領彈力上衣","url":"https://www.obdesign.com.tw/product.aspx?seriesID=AB6767-","right":true,"target":true},{"index":1,"x":193,"y":640,"product":"DA0002","tip":"深藍色長褲","url":"http://xxx.xxx","right":true},{"index":2,"x":509,"y":765,"product":"DA0003","url":"http://xxx.xxx","tip":"白色包包"},{"index":3,"x":1373,"y":73,"product":"DA0004","url":"http://xxx.xxx","tip":"白色帽子","right":true},{"index":4,"x":1327,"y":356,"product":"DA0005","url":"http://xxx.xxx","tip":"白色花襯衫","right":true},{"index":5,"x":1356,"y":756,"product":"DA0006","url":"http://xxx.xxx","tip":"黃色包包","right":true}]}
+          detail : {"image":"https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg","key":"DA0221","data":[{"index":"0","x":"121","y":"287","product":"AB6767","tip":"純色仿針織V領彈力上衣","url":"https://www.obdesign.com.tw/product.aspx?seriesID=AB6767-","right":true,"target":true},{"index":1,"x":193,"y":640,"product":"DA0002","tip":"深藍色長褲","url":"http://xxx.xxx","right":true},{"index":2,"x":509,"y":765,"product":"DA0003","url":"http://xxx.xxx","tip":"白色包包"},{"index":3,"x":1373,"y":73,"product":"DA0004","url":"http://xxx.xxx","tip":"白色帽子","right":true},{"index":4,"x":1327,"y":356,"product":"DA0005","url":"http://xxx.xxx","tip":"白色花襯衫","right":true},{"index":5,"x":1356,"y":756,"product":"DA0006","url":"http://xxx.xxx","tip":"黃色包包","right":true}]}
         }
       },
       components: {
