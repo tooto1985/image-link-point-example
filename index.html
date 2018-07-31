@@ -39,6 +39,7 @@
       text-align: center;
       line-height: 20px;
       font-size: initial;
+      text-decoration: none;
     }
 
     .drawing>a:hover:after {
@@ -62,7 +63,7 @@
     window.addEventListener('DOMContentLoaded', function () {
       new Vue({
         el: '#app',
-        data() {
+        data: function() {
           return {
             originWidth: 0,
             originHeight: 0,
@@ -75,17 +76,17 @@
             json: {}
           }
         },
-        mounted() {
+        mounted: function() {
           var input = {"image":"https://obcdn4.obdesign.com.tw/images/ObdesignBanner/OUTLET/images/180702-BN55-1920x820.jpg","key":"DA0221","data":[{"index":"0","x":"121","y":"287","product":"AB6767","tip":"純色仿針織V領彈力上衣","url":"https://www.obdesign.com.tw/product.aspx?seriesID=AB6767-","right":true,"target":true},{"index":1,"x":193,"y":640,"product":"DA0002","tip":"深藍色長褲","url":"http://xxx.xxx","right":true},{"index":2,"x":509,"y":765,"product":"DA0003","url":"http://xxx.xxx","tip":"白色包包"},{"index":3,"x":1373,"y":73,"product":"DA0004","url":"http://xxx.xxx","tip":"白色帽子","right":true},{"index":4,"x":1327,"y":356,"product":"DA0005","url":"http://xxx.xxx","tip":"白色花襯衫","right":true},{"index":5,"x":1356,"y":756,"product":"DA0006","url":"http://xxx.xxx","tip":"黃色包包","right":true}]}
           this.json = input
-          window.addEventListener('resize', () => {
+          window.addEventListener('resize', function() {
             this.resizeDrawing()
-          }, false)
-          this.$refs.img.onload = () => {
+          }.bind(this), false)
+          this.$refs.img.onload = function() {
             this.originWidth = this.$refs.img.naturalWidth
             this.originHeight = this.$refs.img.naturalHeight
             this.resizeDrawing()
-          }
+          }.bind(this)
           this.$refs.img.onclick = e => {
             this.resizeDrawing()
             this.json.data.push({
@@ -100,28 +101,28 @@
           }
         },
         methods: {
-          addButton() {
+          addButton: function() {
             this.json.data.push({
               index: this.json.data.length
             })
           },
-          removeButton(item) {
+          removeButton: function(item) {
             var index = this.json.data.indexOf(item)
             if (index !== -1) {
               this.json.data.splice(index, 1)
             }
           },
-          saveBotton() {
+          saveBotton: function() {
             alert(JSON.stringify(this.json))
           },
-          setPoint(item) { // item x and y is origin image size
+          setPoint: function(item) { // item x and y is origin image size
             if (!item.x || !item.y) return null
             return {
               left: (100 * (item.x / this.originWidth)) + '%',
               top: (100 * (item.y / this.originHeight)) + '%'
             }
           },
-          resizeDrawing() {
+          resizeDrawing: function() {
             this.parentsPadding = this.$refs.img.x * 2
             if (this.originWidth > document.body.clientWidth - this.parentsPadding) {
               this.scaleWidth = this.originWidth / (document.body.clientWidth - this.parentsPadding)
@@ -133,7 +134,7 @@
               this.isOverWidth = false
             }
           },
-          toFixed(number) {
+          toFixed: function(number) {
             return Math.round(number)
           }
         }
